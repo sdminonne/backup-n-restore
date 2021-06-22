@@ -3,4 +3,14 @@ layout:
 - go.kubebuilder.io/v3
 projectName: backup-n-restore
 repo: github.com/open-cluster-management/backup-n-restore
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: open-cluster-management.io
+  group: cluster
+  kind: Backup
+  path: github.com/open-cluster-management/backup-n-restore/api/v1alpha1
+  version: v1alpha1
 version: "3"
