@@ -1,0 +1,6 @@
+domain: open-cluster-management.io
+layout:
+- go.kubebuilder.io/v3
+projectName: backup-n-restore
+repo: github.com/open-cluster-management/backup-n-restore
+version: "3"
