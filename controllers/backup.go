@@ -23,10 +23,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/open-cluster-management/backup-n-restore/api/v1alpha1"
-
-	vapi "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 func isBackupNotYetStarted(backup *v1alpha1.Backup, c client.Client) bool {
@@ -37,25 +33,15 @@ func isBackupNotYetStarted(backup *v1alpha1.Backup, c client.Client) bool {
 }
 
 func isBackupFinished(backup *v1alpha1.Backup) bool {
-	if backup.Status.VeleroBackup == nil {
-		return false
-	}
 	switch {
+	case backup.Status.VeleroBackup == nil:
+		return false
 	case backup.Status.VeleroBackup.Status.Phase == "Completed" ||
 		backup.Status.VeleroBackup.Status.Phase == "Failed" ||
 		backup.Status.VeleroBackup.Status.Phase == "PartiallyFailed":
 		return true
 	}
 	return false
-}
-
-// TODO: removes this as soon not used anymore
-func getBackupFromVeleroBackup(veleroBackup *vapi.Backup) (*v1alpha1.Backup, error) {
-	var backup *v1alpha1.Backup = nil
-	return backup, apierrors.NewNotFound(schema.GroupResource{
-		Group:    v1alpha1.GroupVersion.Group,
-		Resource: "backups",
-	}, veleroBackup.Name)
 }
 
 func updateStatus(ctx context.Context, backup *v1alpha1.Backup, c client.Client) (*v1alpha1.Backup, error) {

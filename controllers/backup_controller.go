@@ -70,7 +70,6 @@ func (r *BackupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		return ctrl.Result{}, nil
 	default:
 		backupLogger.Info("Backup started and NOT finished")
-
 	}
 
 	return ctrl.Result{}, nil
@@ -83,9 +82,7 @@ var (
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *BackupReconciler) SetupWithManager(mgr ctrl.Manager) error {
-
 	if err := mgr.GetFieldIndexer().IndexField(context.Background(), &vapi.Backup{}, backupOwnerKey, func(rawObj client.Object) []string {
-		// grab the job object, extract the owner...
 		backup := rawObj.(*vapi.Backup)
 		owner := metav1.GetControllerOf(backup)
 		if owner == nil {
@@ -96,7 +93,6 @@ func (r *BackupReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			return nil
 		}
 
-		// ...and if so, return it
 		return []string{owner.Name}
 	}); err != nil {
 		return err
