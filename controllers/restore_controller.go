@@ -24,7 +24,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	clusterv1alpha1 "github.com/open-cluster-management/backup-n-restore/api/v1alpha1"
+	"github.com/open-cluster-management/backup-n-restore/api/v1alpha1"
 )
 
 // RestoreReconciler reconciles a Restore object
@@ -48,8 +48,15 @@ type RestoreReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
 func (r *RestoreReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
+	instance := v1alpha1.Restore{}
+	if err := r.Client.Get(ctx, req.NamespacedName, &instance); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	switch {
+	case IsRestoreFinsihed(&instance):
+		return ctrl.Result{}, nil
 
-	// your logic here
+	}
 
 	return ctrl.Result{}, nil
 }
@@ -57,6 +64,6 @@ func (r *RestoreReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 // SetupWithManager sets up the controller with the Manager.
 func (r *RestoreReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&clusterv1alpha1.Restore{}).
+		For(&v1alpha1.Restore{}).
 		Complete(r)
 }

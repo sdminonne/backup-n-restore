@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -25,21 +26,20 @@ import (
 
 // RestoreSpec defines the desired state of Restore
 type RestoreSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of Restore. Edit restore_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	BackupName   string                    `json:"backupName,omitempty"`
+	VeleroConfig *VeleroConfigRestoreProxy `json:"veleroConfigRestoreProxy,omitempty"`
 }
 
 // RestoreStatus defines the observed state of Restore
 type RestoreStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	RestoreProxyReference *corev1.ObjectReference `json:"restoreProxyReference,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // Restore is the Schema for the restores API
 type Restore struct {
@@ -57,6 +57,16 @@ type RestoreList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Restore `json:"items"`
+}
+
+// VeleroConfigRestoreProxy defines the configuration information for velero configuration to restore ACM through Velero
+type VeleroConfigRestoreProxy struct {
+	// Namespace defines the namespace where velero is installed
+	Namespace string `json:"metadata"`
+	// DetachManagedCluster will detach managedcluster  from backedHub. backedHub has to be available and BackedUpSecreName must be supplied
+	DetachManagedCluster bool `json:"detachManagedClusters,omitempty"`
+	// BackedUpHubSecretName contains the secret name to access the backed up HUB
+	BackedUpHubSecretName string `json:"BackedUpHubSecretName,omitempty"`
 }
 
 func init() {

@@ -33,6 +33,7 @@ import (
 
 	clusterv1alpha1 "github.com/open-cluster-management/backup-n-restore/api/v1alpha1"
 	"github.com/open-cluster-management/backup-n-restore/controllers"
+	vapi "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -45,6 +46,8 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(clusterv1alpha1.AddToScheme(scheme))
+
+	utilruntime.Must(vapi.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -79,8 +82,9 @@ func main() {
 	}
 
 	if err = (&controllers.BackupReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:   mgr.GetClient(),
+		Scheme:   mgr.GetScheme(),
+		Recorder: mgr.GetEventRecorderFor("backup controller"),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Backup")
 		os.Exit(1)
@@ -92,6 +96,14 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Restore")
 		os.Exit(1)
 	}
+
+	if err = (&controllers.VeleroBackupController{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Velero Backup")
+	}
+
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

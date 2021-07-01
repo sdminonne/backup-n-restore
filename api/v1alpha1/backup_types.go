@@ -18,6 +18,8 @@ package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	vapi "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -25,21 +27,19 @@ import (
 
 // BackupSpec defines the desired state of Backup
 type BackupSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of Backup. Edit backup_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	VeleroConfig *VeleroConfigBackupProxy `json:"veleroConfigBackupProxy,omitempty"`
 }
 
 // BackupStatus defines the observed state of Backup
 type BackupStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	VeleroBackup *vapi.Backup `json:"veleroBackup,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // Backup is the Schema for the backups API
 type Backup struct {
@@ -57,6 +57,12 @@ type BackupList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Backup `json:"items"`
+}
+
+// VeleroConfigBackupProxy defines the configuration information for velero configuration to  backup ACM through Velero
+type VeleroConfigBackupProxy struct {
+	// Namespace defines velero namespace
+	Namespace string `json:"metadata"`
 }
 
 func init() {
