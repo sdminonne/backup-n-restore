@@ -164,7 +164,6 @@ var _ = Describe("Backup controller", func() {
 			veleroBackup.Namespace = VeleroNamespaceName
 			veleroBackup.Status.Phase = "InProgress"
 			Expect(k8sClient.Update(ctx, &veleroBackup, &client.UpdateOptions{})).Should(Succeed())
-			//Expect(k8sClient.Status().Update(ctx, &veleroBackup, &client.UpdateOptions{})).Should(Succeed())
 			Eventually(func() bool {
 				b := vapi.Backup{}
 				if err := k8sClient.Get(ctx, types.NamespacedName{Name: createdBackup.Name, Namespace: VeleroNamespaceName}, &b); err != nil {
@@ -182,6 +181,7 @@ var _ = Describe("Backup controller", func() {
 				}
 				return b.Status.Phase == "Completed"
 			}, timeout, interval).Should(BeTrue())
+
 		})
 	})
 })

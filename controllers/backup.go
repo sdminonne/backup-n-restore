@@ -69,13 +69,3 @@ func updateStatus(ctx context.Context, backup *v1alpha1.Backup, c client.Client)
 func generateVeleroBackupName(backupName, backupNamesapce string) string {
 	return backupName
 }
-
-// TODO: implement this. As soon one backup with the right labels 'backup-ocm=velero' is created we should track it creating
-// a Backup.clusters.open-cluster-management.io resource
-func createBackupFromVeleroBackup(backup *vapi.Backup) (*v1alpha1.Backup, error) {
-	return nil, nil
-}
-
-func updateBackupFromVeleroBackup(backup *v1alpha1.Backup, veleroBackup *vapi.Backup) (*v1alpha1.Backup, error) {
-	return backup, nil
-}
