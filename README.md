@@ -1,0 +1,2 @@
+To prototype backup and restore logic for [managedcluster-import-controller](https://github.com/open-cluster-management/managedcluster-import-controller). Goal of this ***temporary*** repository is to put collect some feedbacks on the `golang` implementation of [sre-tools/backup-n-restore](https://github.com/open-cluster-management/sre-tools/tree/main/backup-n-restore).
+It's not supported.
